@@ -2,11 +2,15 @@
 import { useState } from "react";
 import Board from "./Board";
 import { TPlayer } from "@components/typesafe/type";
-
-export default function Game() {
+export default function AdvancedGame() {
   const [board, setBoard] = useState<TPlayer[]>(Array(9).fill(null));
   const [xIsNext, setXIsNext] = useState<boolean>(true);
   const [winner, setWinner] = useState<TPlayer>(null);
+  const [winningSquares, setWinningSquares] = useState<number[]>([]);
+  const [scores, setScores] = useState<{ X: number; O: number }>({
+    X: 0,
+    O: 0,
+  });
 
   const handleClick = (index: number) => {
     if (board[index] || winner) return;
@@ -17,17 +21,29 @@ export default function Game() {
     newBoard[index] = xIsNext ? "X" : "O";
     setBoard(newBoard);
     setXIsNext((prev) => !prev);
-    setWinner(calculateWinner(newBoard));
+
+    const gameWinner = calculateWinner(newBoard);
+    if (gameWinner) {
+      setWinner(gameWinner.winner);
+      setWinningSquares(gameWinner.winningSquares);
+      setScores((prev) => ({
+        ...prev,
+        [gameWinner.winner as string]:
+          prev[gameWinner.winner as keyof typeof scores] + 1,
+      }));
+    }
   };
 
-  const calculateWinner = (squares: TPlayer[]): TPlayer => {
+  const calculateWinner = (
+    squares: TPlayer[]
+  ): { winner: TPlayer; winningSquares: number[] } | null => {
     const checkWinner = (a: number, b: number, c: number) => {
       if (
         squares[a] &&
         squares[a] === squares[b] &&
         squares[a] === squares[c]
       ) {
-        return squares[a];
+        return { winner: squares[a], winningSquares: [a, b, c] };
       }
       return null;
     };
@@ -56,6 +72,7 @@ export default function Game() {
     setBoard(Array(9).fill(null));
     setXIsNext(true);
     setWinner(null);
+    setWinningSquares([]);
   };
 
   const gameStatus = () => {
@@ -82,7 +99,18 @@ export default function Game() {
   return (
     <div className="flex flex-col items-center justify-center pt-52">
       <h1 className="text-4xl mb-4">{gameStatus()}</h1>
-      <Board squares={board} onClick={handleClick} />
+      <div className="relative">
+        <Board
+          squares={board}
+          onClick={handleClick}
+          winningSquares={winningSquares}
+        />
+        <div className="absolute top-1/2 -translate-y-1/2 -right-20">
+          <p className="text-lg">Score:</p>
+          <p className="text-lg">X: {scores.X}</p>
+          <p className="text-lg">O: {scores.O}</p>
+        </div>
+      </div>
       <button
         className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
         onClick={restartGame}
