@@ -84,7 +84,7 @@ export default function AdvancedGame() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center pt-52">
+    <div className="flex flex-col items-center justify-center pt-20 md:pt-52">
       {(winner || !board.includes(null)) && (
         <p className="text-2xl mb-6 font-bold animate-tada">{gameStatus()}</p>
       )}
@@ -114,7 +114,7 @@ export default function AdvancedGame() {
           winningSquares={winningSquares}
           xIsNext={xIsNext}
         />
-        <div className="absolute top-1/2 -translate-y-1/2 -right-40">
+        <div className="max-md:my-6 md:absolute md:top-1/2 md:-translate-y-1/2 md:-right-40">
           <p className="text-lg font-bold">Score:</p>
           <p className="text-lg font-semibold text-blue-500">
             Player X{" "}
