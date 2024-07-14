@@ -2,11 +2,17 @@ import { TPlayer } from "@components/typesafe/type";
 
 type TBoard = {
   squares: TPlayer[];
+  xIsNext?: boolean;
   onClick: (i: number) => void;
   winningSquares?: number[];
 };
 
-export default function Board({ squares, winningSquares, onClick }: TBoard) {
+export default function Board({
+  squares,
+  xIsNext,
+  winningSquares,
+  onClick,
+}: TBoard) {
   return (
     <div className="grid grid-cols-3 gap-1">
       {squares.map((square, index) => (
